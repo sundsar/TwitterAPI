@@ -6,7 +6,7 @@ from pprint import pprint
 from iso3166 import countries
 
 
-def cities_forcountry(c_code):
+def getcities_forcountry(c_code):
     """ Receives a string that is a ISO country code and returns a dict that
         is a mapping of 'city name' : 'Where on earth Yahoo ID' for that country
     """
@@ -20,7 +20,7 @@ def cities_forcountry(c_code):
     return city_woeid
 
 
-def trends_forcity(ci_name, ci_woeid):
+def gettrends_forcity(ci_name, ci_woeid):
     """ Receives a the city name and its WOEID and prints out the top 5
         trends for that city
     """
@@ -67,7 +67,7 @@ except KeyError:
     sys.exit(
         f"'{user_country}' is not a valid Country code. For ISO codes refer {wikiurl}")
 
-dloc = cities_forcountry(c_code)
+dloc = getcities_forcountry(c_code)
 
 if len(dloc) < 1:
     print(f"No locations found for Country {c_code}-{c_name}")
@@ -81,4 +81,4 @@ else:
             break
         ci_name = titlecase(user_city)
         ci_woeid = dloc.get(ci_name)
-        trends_forcity(ci_name, ci_woeid)
+        gettrends_forcity(ci_name, ci_woeid)
