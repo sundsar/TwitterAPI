@@ -7,11 +7,12 @@ from iso3166 import countries
 
 
 def cities_forcountry(c_code):
-    """ Takes in a string that is a ISO country code and returns a dict that
+    """ Receives a string that is a ISO country code and returns a dict that
         is a mapping of 'city name' : 'Where on earth Yahoo ID' for that country
     """
     jtrendlst = api.trends_available()
     city_woeid = dict()
+    # print(jtrendlst)
     for loc in jtrendlst:
         if loc['countryCode'] == c_code and loc['parentid'] != 1:
             k, v = loc['name'], loc['woeid']
@@ -20,27 +21,23 @@ def cities_forcountry(c_code):
 
 
 def trends_forcity(ci_name, ci_woeid):
-    """ Takes in a the city name and its WOEID and prints out the top 5
+    """ Receives a the city name and its WOEID and prints out the top 5
         trends for that city
     """
-    raised = True
     try:
         jobjcity = api.trends_place(ci_woeid)
     except Exception as e:
         print(e)
-        print("No trends are available for City: '{}' with WOEID ID '{}'\n".format(
-            ci_name, ci_woeid))
+        print(
+            f"No trends are available for City: '{ci_name}' with WOEID ID '{ci_woeid}'\n")
     else:
-        raised = False
-    if not raised:
         trends = jobjcity[0]['trends']
-        fmt = '{}. {:<40} {}'
         for i, trend in enumerate(trends[:5], 1):
-            print(fmt.format(i, trend['name'], trend['url']))
+            print(f"{i}. {trend['name']:<40} {trend['url']}")
 
 
 def titlecase(s):
-    """ Takes in a string that is the user's city input and returns the city name
+    """ Receives a string that is the user's city input and returns the city name
         that is title()'ed'.
     """
     if s.count('-') > 1:
@@ -67,21 +64,21 @@ try:
     c_name = countries.get(user_country).name
 except KeyError:
     wikiurl = "https://en.wikipedia.org/wiki/ISO_3166-1"
-    sys.exit("'{}' is not a valid Country code. For ISO codes refer {}".format(
-        user_country, wikiurl))
+    sys.exit(
+        f"'{user_country}' is not a valid Country code. For ISO codes refer {wikiurl}")
 
 dloc = cities_forcountry(c_code)
 
-if dloc:
-    print("Trends are available for the following cities in {}".format(c_name))
+if len(dloc) < 1:
+    print(f"No locations found for Country {c_code}-{c_name}")
+else:
+    print(f"Trends are available for the following cities in {c_name}")
     pprint(list(dloc.keys()), indent=4, compact=True)
     while True:
         print("To Exit hit 'Enter' OR")
-        user_city = input("Pick a city in {}: ".format(c_code))
+        user_city = input(f"Pick a city in {c_code}: ")
         if len(user_city) < 1:
             break
         ci_name = titlecase(user_city)
         ci_woeid = dloc.get(ci_name)
         trends_forcity(ci_name, ci_woeid)
-else:
-    print("No locations found for Country {}-{}".format(c_code, c_name))
