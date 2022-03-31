@@ -10,7 +10,8 @@ def getcities_forcountry(c_code):
     """ Receives a string that is a ISO country code and returns a dict that
         is a mapping of 'city name' : 'Where on earth Yahoo ID' for that country
     """
-    jtrendlst = api.trends_available()
+    # print(dir(api))
+    jtrendlst = api.available_trends()
     city_woeid = dict()
     # print(jtrendlst)
     for loc in jtrendlst:
@@ -25,7 +26,7 @@ def gettrends_forcity(ci_name, ci_woeid):
         trends for that city
     """
     try:
-        jobjcity = api.trends_place(ci_woeid)
+        jobjcity = api.get_place_trends(ci_woeid)
     except Exception as e:
         print(e)
         print(
